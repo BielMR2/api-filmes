@@ -27,7 +27,10 @@ export function New() {
         navigate(-1)
     }
 
-    function handleAddTag() {
+    function handleAddTag(value) {
+        if(!value){
+            return alert("Você não pode enviar uma tag vazia")
+        }
         setTags(prevState => [...prevState, newTag])
         setNewTag('')
     }
@@ -44,23 +47,28 @@ export function New() {
             return alert("Coloque a nota da nota")
         }
         if(newTag){
-            alert("Você deixou uma tag no campo para adicionar, mas nao clicou em adicinar. CLique para adicionar ou deixe o campo vazio")
+            alert("Você deixou uma tag no campo para adicionar, mas nao clicou em adicinar. Clique para adicionar ou deixe o campo vazio")
         }
 
-        try {
-            await api.post("/notes", {
-                title,
-                description,
-                rating,
-                tags
-            })
-        } catch (error) {
+
+        await api.post("/notes", {
+            title,
+            description,
+            rating,
+            tags
+        })
+        .then(() => {
+            alert("Nota criada com sucesso!")
+            navigate("/")
+        })
+        .catch(error => {
             if(error.response){
                 alert(error.response.data.message)
             } else {
-                error
+                alert(error)
             }
-        }
+        })
+
         
     }
 
@@ -108,8 +116,8 @@ export function New() {
                     placeholder="Novo marcador" 
                     value={newTag}
                     onChange={e => setNewTag(e.target.value)}
-                    onClick={handleAddTag} 
-                    onKeyPress={e => e.key == "Enter" && handleAddTag()}
+                    onClick={() => handleAddTag(newTag)} 
+                    onKeyPress={e => (e.key) == "Enter" && handleAddTag(newTag)}
                 />
             </div>
 

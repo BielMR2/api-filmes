@@ -8,19 +8,20 @@ import { Input } from "../Input"
 
 import avatarPlaceholder from '../../assets/avatar_placeholder.svg'
 
-export function Header({ haveInput }){
+export function Header({ haveInput, onChange }){
     const { signOut, user } = useAuth()
     const navigate = useNavigate()
 
     const avatarURL = user.avatar ? `${api.defaults.baseURL}/files/${user.avatar}` : avatarPlaceholder
+    console.log()
 
     function handleSignOut() {
         navigate("/")
         signOut()
     }
 
-    function handleOpenProfile(user_id) {
-        navigate(`/profile/${user_id}`)
+    function handleOpenProfile() {
+        navigate(`/profile`)
     }
 
     return(
@@ -31,13 +32,16 @@ export function Header({ haveInput }){
                 <Input 
                 placeholder="Pesquisar pelo título"
                 type="text"
+                onChange={onChange}
                 />
             }
             
 
             <Profile>
                 <div>
-                    <h2 onClick={handleOpenProfile} >{user.name}</h2>
+                    <h2 onClick={() => handleOpenProfile(user.id)}>
+                        {user.name}
+                    </h2>
                     <Logout onClick={handleSignOut}>
                         Sair
                     </Logout>
@@ -46,7 +50,7 @@ export function Header({ haveInput }){
                 <img
                     src={avatarURL}
                     alt="Foto do usuário"
-                    onClick={handleOpenProfile}
+                    onClick={() => handleOpenProfile(user.id)}
                 />
             </Profile>
 
